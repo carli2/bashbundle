@@ -10,7 +10,6 @@ The bashbundle format has the following structure:
 
 * filename.bashbundle  - one file containing all relevant data
   * version - file containing a single revision number (only newer bundles than the installed are executed)
-  * info - file containing some information about the bundle
   * data.tar.gz - file containing the signed bundle itself
     * version - the version again (signed this time)
     * run.bash - file that gets executed once the version is newer and the package is signed

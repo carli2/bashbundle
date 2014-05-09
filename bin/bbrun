@@ -6,6 +6,7 @@ if [ -z "$1" ];	then
 	exit
 fi
 
+pwd="`pwd`"
 
 dst=`mktemp -d`
 
@@ -15,16 +16,31 @@ cd "$dst"
 tar xf p.tar.gz
 rm p.tar.gz
 
+function execute {
+	# unpack bundle
+	mkdir x
+	cd x
+	tar xf ../data.tar.gz
+	# execute
+	bash run.bash
+	# cleanup
+	cd /
+	rm -rf "$dst"
+}
+
 # TODO check version
-# TODO check signature
+# check signature against keys
+(find "$pwd" -type f -iname "*.pem" -print0; find /etc/bashbundle/keys -type f -iname "*.pem" -print0) | (
+while IFS= read -r -d $'\0' pubkey; do
+	echo "test $pubkey"
+	if openssl dgst -verify  "$pubkey" -signature "data.sig" < data.tar.gz
+	then
+		echo "successful!"
+		execute
+		exit
+	fi
+done
 
-# unpack bundle
-mkdir x
-cd x
-tar xf ../data.tar.gz
-# execute
-bash run.bash
-
-cd /
-rm -rf "$dst"
+echo Signature does not match
+)
 

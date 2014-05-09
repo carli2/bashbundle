@@ -13,8 +13,12 @@ then
 fi
 
 # increment version number
-version="`cat "$data/version"`"
-if ! [[ "$version" =~ '^[0-9]+$' ]]; then
+if [ -f "$data/version" ]; then
+	version="`cat "$data/version"`"
+	if ! [[ "$version" =~ '^[0-9]+$' ]]; then
+		version=0
+	fi
+else
 	version=0
 fi
 version=$(($version+1))
@@ -28,7 +32,8 @@ echo $version > "$dst/version"
 echo
 echo Data archive contents:
 (cd "$data"; tar cvf "$dst/data.tar.gz" *)
-# TODO: sign package
+# sign package
+openssl dgst -sign "$privkey" -out "$dst/data.sig" < "$dst/data.tar.gz"
 
 # create archive
 echo
