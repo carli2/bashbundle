@@ -1,7 +1,8 @@
 bashbundle
 ==========
 
-Software for running updates on linux based embedded systems
+Software for running updates on linux based embedded systems.
+This piece of software allows you to ship scripts among with a payload (some files) as a single file. The contents of the package are signed with a private key so you can distribute your updates to users without opening a backdoor for them. Bashbundle also keeps track of the version number so updates are not performed twice.
 
 Format
 ------
@@ -21,6 +22,7 @@ Usage runtime
 
 `bbrun [bashbundle file] [versions folder]`
 
+* execute the bundle if it's newer than the latest executed version and if the package is correctly signed
 * Bashbundle looks for authorized signing keys in /etc/bashbundle/keys
 * versions for each bundle are stored in the version folder (use /etc/bashbundle/versions for global and ~/.bashbundle/versions for local packages)
 
