@@ -4,6 +4,9 @@ helloworld.bashbundle: data/* privkey.pem
 run: helloworld.bashbundle
 	../../bin/bbrun helloworld.bashbundle
 
-clean:
+clean: reset_config
 	rm helloworld.bashbundle || true
 	rm data/version || true
+
+reset_config:
+	rm ~/.bashbundle/versions/helloworld.bashbundle.version || true

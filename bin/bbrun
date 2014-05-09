@@ -21,16 +21,43 @@ function execute {
 	mkdir x
 	cd x
 	tar xf ../data.tar.gz
-	# execute
-	bash run.bash
+	# check for version spoofing
+	if [ "`cat version`" == "`cat ../version`" ]
+	then
+		# execute
+		bash run.bash
+	else
+		# spoofed
+		echo Error: version spoofing
+	fi
 	# cleanup
 	cd /
 	rm -rf "$dst"
 }
 
-# TODO check version
+# check version
+if [ -w "/etc" ]; then
+	versions=/etc/bashbundle/versions
+else
+	versions=~/.bashbundle/versions
+fi
+mkdir -p $versions
+if [ -w "$versions/`basename "$1"`.version" ]
+then
+	vfile="$versions/`basename "$1"`.version"
+	if [ "`cat version`" -le "`cat "$vfile"`" ]
+	then
+		echo This Version is already installed
+		echo remove $vfile if you want to rerun
+		exit
+	fi
+fi
+cp version "$versions/`basename "$1"`.version"
+
 # check signature against keys
-(find "$pwd" -type f -iname "*.pem" -print0; find /etc/bashbundle/keys -type f -iname "*.pem" -print0) | (
+(find "$pwd" -type f -iname "*.pem" -print0;
+ find /etc/bashbundle/keys -type f -iname "*.pem" -print0;
+ find ~/.bashbundle/keys -type f -iname "*.pem" -print0) | (
 while IFS= read -r -d $'\0' pubkey; do
 	echo "test $pubkey"
 	if openssl dgst -verify  "$pubkey" -signature "data.sig" < data.tar.gz

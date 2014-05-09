@@ -15,14 +15,17 @@ fi
 # increment version number
 if [ -f "$data/version" ]; then
 	version="`cat "$data/version"`"
-	if ! [[ "$version" =~ '^[0-9]+$' ]]; then
-		version=0
+	if ! [[ "$version" =~ '^[0-9]+\\s+$' ]]; then
+		echo Illegal version file format. Resetting.
+		version=1
 	fi
 else
+	echo No version file found
 	version=0
 fi
 version=$(($version+1))
 echo $version > "$data/version"
+echo Version is now $version
 
 # create tmp folder to prepare archive
 dst=`mktemp -d`
