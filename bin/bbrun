@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ -z "$1" ];	then
+	echo USAGE:
+	echo bbrun [bashbundle file] [versions folder]
+	exit
+fi
+
+
+dst=`mktemp -d`
+
+# unpack to tmp
+cp "$1" $dst/p.tar.gz
+cd "$dst"
+tar xf p.tar.gz
+rm p.tar.gz
+
+# TODO check version
+# TODO check signature
+
+# unpack bundle
+mkdir x
+cd x
+tar xf ../data.tar.gz
+# execute
+bash run.bash
+
+cd /
+rm -rf "$dst"
+

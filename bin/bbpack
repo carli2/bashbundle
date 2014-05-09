@@ -1,0 +1,41 @@
+#!/bin/bash
+
+data="$1"
+privkey="$2"
+dstfile="$3"
+
+# validate parameters
+if ! [ -d "$data" -a -f "$privkey" -a -n "$dstfile" ]
+then
+	echo USAGE:
+	echo bbpack [data folder] [private key file] [destination file]
+	exit
+fi
+
+# increment version number
+version="`cat "$data/version"`"
+if ! [[ "$version" =~ '^[0-9]+$' ]]; then
+	version=0
+fi
+version=$(($version+1))
+echo $version > "$data/version"
+
+# create tmp folder to prepare archive
+dst=`mktemp -d`
+# add version to archive
+echo $version > "$dst/version"
+# create data archive
+echo
+echo Data archive contents:
+(cd "$data"; tar cvf "$dst/data.tar.gz" *)
+# TODO: sign package
+
+# create archive
+echo
+echo Bundle contents:
+(cd "$dst"; tar cvzf p.tar.gz *)
+mv "$dst/p.tar.gz" "$dstfile"
+rm -rf "$dst"
+
+echo
+echo Successfully created bash bundle
