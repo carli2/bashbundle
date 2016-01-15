@@ -37,7 +37,7 @@ echo
 echo Data archive contents:
 (cd "$data"; tar cvf "$dst/data.tar.gz" *)
 # sign package
-openssl dgst -sign "$privkey" -out "$dst/data.sig" < "$dst/data.tar.gz"
+openssl dgst -sha1 -sign "$privkey" -out "$dst/data.sig" < "$dst/data.tar.gz"
 
 # create archive
 echo
